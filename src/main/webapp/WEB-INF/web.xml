@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>log4j-servlet25-listener-tomcat6</display-name>
+
+ 
+    <!-- 
+        method 1
+        pros: 1) use it as is
+        cons: 2) cannot config properties location. Must allocate log4j.properties in /src/main/resources/ (equal to /WEB-INF/classes/)
+     -->
+
+    <listener>
+        <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
+    </listener>
+    
+     
+     
+    <!-- 
+        method 2
+        pros: 1) use it as is
+        cons: 1) can't pass config by sites, can be resolved by creating a servlet and init by PropertyConfigurator
+     -->
+
+    
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>/WEB-INF/classes/log4j-method2.properties</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    
+    
+    
+    <!-- 
+        method 3
+        cons: 1) build by own listener
+              2) can't pass config by sites, can be resolved by creating a servlet and init by PropertyConfigurator
+     -->
+
+    <context-param>
+        <param-name>log4j-file</param-name>
+        <param-value>${catalina.base}/webapps/log4j-servlet25-listener-tomcat6/WEB-INF/classes/log4j-method3.properties</param-value>
+    </context-param>
+    <context-param>
+        <param-name>log4j-refresh-interval</param-name>
+        <param-value>600000</param-value>
+    </context-param>
+    <listener>
+        <listener-class>foo.bar.listener.Log4InitializerListener</listener-class>
+    </listener>
+
+    
+
+     <!-- 
+        method 4
+        pros: 1) allow pass config by sites
+        cons: 1) build by own              
+     -->
+    
+    <servlet>
+        <servlet-name>Log4InitializerServlet</servlet-name>
+        <servlet-class>foo.bar.servlet.Log4InitializerServlet</servlet-class>
+       
+       <init-param>
+            <param-name>site</param-name>
+            <param-value>dev</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>dev</param-name>
+            <param-value>log4j-dev-file,key-dev</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>uat</param-name>
+            <param-value>log4j-uat-file,key-uat</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>log4j-dev-file</param-name>
+            <param-value>${catalina.base}/webapps/log4j-servlet25-listener-tomcat6/WEB-INF/classes/log4j-dev-method4.properties</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>key-dev</param-name>
+            <param-value>value-dev</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>log4j-uat-file</param-name>
+            <param-value>${catalina.base}/webapps/log4j-servlet25-listener-tomcat6/WEB-INF/classes/log4j-uat-method4.properties</param-value>
+        </init-param>
+        
+        <init-param>
+            <param-name>key-uat</param-name>
+            <param-value>value-uat</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Log4InitializerServlet</servlet-name>
+        <url-pattern>/Log4InitializerServlet</url-pattern>
+    </servlet-mapping>
+    
+    
+    
+    
+    <servlet>
+        <servlet-name>IndexController</servlet-name>
+        <servlet-class>foo.bar.servlet.IndexController</servlet-class>
+      
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>IndexController</servlet-name>
+        <url-pattern>/IndexController</url-pattern>
+    </servlet-mapping>
+    
+</web-app> 
