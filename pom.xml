@@ -39,9 +39,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
-        <sonar.verbose>true</sonar.verbose>
-        <sonar.exclusions>WebContent/jsp/*.js</sonar.exclusions>
     </properties>
 
     <build>
